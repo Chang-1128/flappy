@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flappy Bird - Challenge</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      background-color: #e0f7fa;
+      font-family: Arial, sans-serif;
+    }
+    h1 {
+      color: #00796b;
+      margin-top: 20px;
+    }
+    canvas {
+      background-color: #fff;
+      border: 2px solid #00838f;
+      margin-top: 20px;
+      display: none; /* Hide canvas until game starts */
+    }
+    .btn {
+      display: inline-block;
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 20px;
+      color: #fff;
+      background-color: #00796b;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #restartBtn {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Play & Win Free Insurance!</h1>
+  <button class="btn" id="startBtn">Challenge</button>
+  <canvas id="gameCanvas" width="400" height="600"></canvas>
+  <button class="btn" id="restartBtn">Restart</button>
+
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    const startBtn = document.getElementById("startBtn");
+    const restartBtn = document.getElementById("restartBtn");
+
+    let bird, pipes, score, frame, gameOver, won;
+    const pipeWidth = 50, pipeGap = 200, pipeSpeed = 2;
+    const gravity = 0.25, jumpStrength = -6;
+
+    function initGame() {
+      bird = { x: 50, y: 300, radius: 15, velocity: 0 };
+      pipes = [];
+      score = 0;
+      frame = 0;
+      gameOver = false;
+      won = false;
+      canvas.style.display = "block"; 
+      startBtn.style.display = "none";
+      restartBtn.style.display = "none";
+      update();
+    }
+
+    function jump() {
+      if (!gameOver) bird.velocity = jumpStrength;
+    }
+    document.addEventListener("keydown", jump);
+    document.addEventListener("touchstart", jump);
+
+    function createPipe() {
+      let topHeight = Math.floor(Math.random() * (canvas.height - pipeGap - 100)) + 50;
+      pipes.push({ x: canvas.width, topHeight, bottomY: topHeight + pipeGap, passed: false });
+    }
+
+    function update() {
+      if (gameOver) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      frame++;
+
+      bird.velocity += gravity;
+      bird.y += bird.velocity;
+
+      ctx.beginPath();
+      ctx.arc(bird.x, bird.y, bird.radius, 0, Math.PI * 2);
+      ctx.fillStyle = "#ff7043";
+      ctx.fill();
+      ctx.closePath();
+
+      if (frame % 90 === 0) createPipe();
+
+      for (let p of pipes) {
+        p.x -= pipeSpeed;
+        ctx.fillStyle = "#00838f";
+        ctx.fillRect(p.x, 0, pipeWidth, p.topHeight);
+        ctx.fillRect(p.x, p.bottomY, pipeWidth, canvas.height - p.bottomY);
+
+        if (!p.passed && p.x + pipeWidth < bird.x) {
+          score++;
+          p.passed = true;
+        }
+        if (bird.x + bird.radius > p.x && bird.x - bird.radius < p.x + pipeWidth &&
+          (bird.y - bird.radius < p.topHeight || bird.y + bird.radius > p.bottomY)) {
+          endGame();
+        }
+      }
+
+      if (bird.y + bird.radius > canvas.height || bird.y - bird.radius < 0) endGame();
+
+      ctx.fillStyle = "#00796b";
+      ctx.font = "20px Arial";
+      ctx.fillText("Score: " + score, 10, 25);
+
+      if (score >= 10 && !won) {
+        won = true;
+        endGame();
+        setTimeout(() => alert("🎉 Congratulations! You win free insurance! 🎉"), 500);
+      }
+
+      if (!gameOver) requestAnimationFrame(update);
+    }
+
+    function endGame() {
+      gameOver = true;
+      restartBtn.style.display = "block";
+    }
+
+    startBtn.addEventListener("click", initGame);
+    restartBtn.addEventListener("click", initGame);
+  </script>
+</body>
+</html>
