@@ -52,7 +52,8 @@
 
     let bird, pipes, score, frame, gameOver, won;
     const pipeWidth = 50, pipeGap = 200, pipeSpeed = 2;
-    const gravity = 0.25, jumpStrength = -6;
+    const gravity = 0.15;  // Reduced gravity to slow down falling speed
+    const jumpStrength = -5; // Adjusted jump strength for better balance
 
     function initGame() {
       bird = { x: 50, y: 300, radius: 15, velocity: 0 };
