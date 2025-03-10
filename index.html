@@ -51,9 +51,9 @@
     const restartBtn = document.getElementById("restartBtn");
 
     let bird, pipes, score, frame, gameOver, won;
-    const pipeWidth = 50, pipeGap = 230, pipeSpeed = 4.5; // Faster pipes
-    const gravity = 0.3; // Bird falls even faster
-    const jumpStrength = -7; // Stronger jump
+    const pipeWidth = 50, pipeGap = 230, pipeSpeed = 5; // Faster pipes
+    const gravity = 0.35; // Bird falls faster
+    const jumpStrength = -7.5; // Stronger jump
 
     function initGame() {
       bird = { x: 50, y: 300, radius: 15, velocity: 0 };
@@ -93,7 +93,7 @@
       ctx.fill();
       ctx.closePath();
 
-      if (frame % 85 === 0) createPipe(); // Pipes appear even more frequently
+      if (frame % 80 === 0) createPipe(); // More pipes appear even faster
 
       for (let p of pipes) {
         p.x -= pipeSpeed;
@@ -123,7 +123,7 @@
         setTimeout(() => alert("🎉 Congratulations! You win free insurance! 🎉"), 500);
       }
 
-      if (!gameOver) setTimeout(() => requestAnimationFrame(update), 15); // Smooth gameplay
+      if (!gameOver) setTimeout(() => requestAnimationFrame(update), 14); // Smoother gameplay
     }
 
     function endGame() {
